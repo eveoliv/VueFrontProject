@@ -6,10 +6,11 @@
   <input type="search" class="filtro" @input="filtro = $event.target.value" placeholder="filtre por parte do titulo">
   
   <ul class="lista-fotos">
-    <li class="lista-fotos-item" v-for="foto of fotosComFiltro">
-      
+    
+    <li class="lista-fotos-item" v-for="foto of fotosComFiltro" :key="foto">       
+      <!-- erro de chave duplicada :key="foto"-->
       <meu-painel :titulo="foto.titulo">       
-          <imagem-responsiva :url="foto.url" :titulo="foto.titulo"/>
+          <imagem-responsiva v-meu-transform:scale.animacao="2" :url="foto.url" :titulo="foto.titulo"/>
           <meu-botao tipo="button" 
                      rotulo="REMOVER" 
                      @botaoAtivado="remove(foto)" 
