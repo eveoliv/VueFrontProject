@@ -29,6 +29,11 @@
                 :url="foto.url"
                 :titulo="foto.titulo"
               />
+
+              <router-link :to="{ name: 'altera', params: { id: foto._id } }">
+                <meu-botao tipo="button" rotulo="ALTERAR"/>              
+              </router-link>
+
               <meu-botao
                 tipo="button"
                 rotulo="REMOVER"
@@ -87,9 +92,8 @@ export default {
           this.fotos.splice(indice, 1);
           this.mensagem = "Foto removida com sucesso!";
         },
-        err => {
-          console.log(err);
-          this.mensagem = "Não foi possivel remover a foto.";
+        err => {          
+          this.mensagem = err.message;
         }
       );
 
@@ -125,7 +129,7 @@ export default {
     this.service = new FotoService(this.$resource);
     this.service
       .lista()
-      .then(fotosApi => (this.fotos = fotosApi), err => console.log(err));
+      .then(fotosApi => this.fotos = fotosApi, err => this.mensagem = err.message);
 
     //exemplo2
     // this.resource = this.$resource('v1/fotos{/id}');

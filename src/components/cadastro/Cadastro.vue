@@ -3,16 +3,27 @@
     <h1 class="centralizado">Cadastro</h1>
     <h2 class="centralizado">{{ foto.titulo }}</h2>
 
+    <h2 v-if="foto._id" class="centralizado">Alterando</h2>
+    <h2 v-else class="centralizado">Incluindo</h2>
+
     <form @submit.prevent="grava()">
       <div class="controle">
         <label for="titulo">TÍTULO</label>
-        <input id="titulo" autocomplete="off" v-model.lazy="foto.titulo" />
+        <input
+          id="titulo"
+          autocomplete="off"
+          v-model.lazy="foto.titulo"
+        />
         <!--binding bilateral <input id="titulo" autocomplete="off" @input="foto.titulo = $event.target.value" :value="foto.titulo"> -->
       </div>
 
       <div class="controle">
         <label for="url">URL</label>
-        <input id="url" autocomplete="off" v-model.lazy="foto.url" />
+        <input
+          id="url"
+          autocomplete="off"
+          v-model.lazy="foto.url"
+        />
         <imagem-responsiva
           v-show="foto.url"
           :url="foto.url"
@@ -28,14 +39,20 @@
           autocomplete="off"
           v-model="foto.descricao"
         ></textarea>
-        <!-- <textarea id="descricao" autocomplete="off" @input="foto.descricao = $event.target.value" :value="foto.descricao"></textarea> -->
+          <!-- <textarea id="descricao" autocomplete="off" @input="foto.descricao = $event.target.value" :value="foto.descricao"></textarea> -->
       </div>
 
       <div class="centralizado">
-        <meu-botao rotulo="GRAVAR" tipo="submit" />
-        <router-link :to="{ name: home }"
-          ><meu-botao rotulo="VOLTAR" tipo="button"
-        /></router-link>
+        <meu-botao
+          rotulo="GRAVAR"
+          tipo="submit"
+        />
+        <router-link :to="{ name: 'home' }">
+          <meu-botao
+            rotulo="VOLTAR"
+            tipo="button"
+          />
+        </router-link>
       </div>
     </form>
   </div>
@@ -50,28 +67,31 @@ import FotoService from "../../domain/foto/FotoService";
 export default {
   components: {
     "imagem-responsiva": ImagemResponsiva,
-    "meu-botao": Botao,
+    "meu-botao": Botao
   },
 
   data() {
     return {
       foto: new Foto(),
+      id: this.$route.params.id
     };
   },
 
   methods: {
     grava() {
-
       //exemplo3
       this.service
         .cadastra(this.foto)
-        .then(() => this.foto = new Foto(), err => alert('deu erro'));;
+        .then(() => {
+          if (this.id) this.$router.push({ name: 'home' });                      
+          this.foto = new Foto();
+        }, err => alert("deu erro"));
 
       //exemplo2
       // this.resource
       //   .save(this.foto)
       //   .then(() => this.foto = new Foto(), err => alert('deu erro'));;
-      
+
       //exemplo1
       // this.$http
       //   .post('v1/fotos', this.foto)
@@ -81,13 +101,14 @@ export default {
   },
 
   created() {
-
     this.service = new FotoService(this.$resource);
     //this.resource = this.$resource('v1/fotos');
 
+    if (this.id) {
+      this.service.busca(this.id).then(foto => (this.foto = foto));
+    }
   }
 };
-
 </script>
 
 <style scoped>
